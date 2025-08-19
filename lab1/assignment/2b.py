@@ -1,115 +1,74 @@
 import numpy as np
 import cv2
 
-# ----------------------------
-# Function 1: Gaussian smoothing kernel
-# ----------------------------
 def gaussian_kernel(sigma):
-    ksize = int(5 * sigma)  # kernel size proportional to sigma
-    if ksize % 2 == 0:
-        ksize += 1
-    ax = np.linspace(-(ksize // 2), ksize // 2, ksize)
-    xx, yy = np.meshgrid(ax, ax)
-    
-    # Gaussian function
-    kernel = np.exp(-(xx**2 + yy**2) / (2 * sigma**2))
+    size = int(5 * sigma)
+    if size % 2 == 0:
+        size += 1
+
+    x = np.arange(-size//2, size//2 + 1)
+    y = np.arange(-size//2, size//2 + 1)
+    xr, yc = np.meshgrid(x, y)
+
+    kernel = np.exp(-(xr**2 + yc**2) / (2 * sigma**2))
     kernel = kernel / np.sum(kernel)
-    return kernel.astype(np.float32)
+    return kernel
 
-# ----------------------------
-# Function 2: Gaussian derivative (Laplacian of Gaussian) kernel
-# ----------------------------
-def gaussian_derivative_kernel(sigma):
-    ksize = int(7 * sigma)  # bigger window for derivative
-    if ksize % 2 == 0:
-        ksize += 1
-    ax = np.linspace(-(ksize // 2), ksize // 2, ksize)
-    xx, yy = np.meshgrid(ax, ax)
+def sharpening_kernel(sigma):
+    size = int(7 * sigma)
+    if size % 2 == 0:
+        size += 1
 
-    # Laplacian of Gaussian (LoG) – 2nd order derivative
-    kernel = ((xx**2 + yy**2 - 2 * (sigma**2)) / (sigma**4)) * \
-             np.exp(-(xx**2 + yy**2) / (2 * sigma**2))
+    x = np.arange(-size//2, size//2 + 1)
+    y = np.arange(-size//2, size//2 + 1)
+    xr, yc = np.meshgrid(x, y)
 
-    kernel = kernel - np.mean(kernel)   # normalize
-    return kernel.astype(np.float32)
+    kernel = ((xr**2 + yc**2 - 2*sigma**2) / (sigma**4)) * np.exp(-(xr**2 + yc**2) / (2*sigma**2))
+    kernel = kernel - np.mean(kernel)   # normalization
+    return kernel
 
-# ----------------------------
-# Main
-# ----------------------------
-# Load color image
+
 img = cv2.imread('lena.jpg')
-if img is None:
-    raise FileNotFoundError("Image not found. Place 'lena.jpg' in the same folder.")
-
-# Convert BGR -> HSV
 img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-# Split HSV channels
 H, S, V = cv2.split(img_hsv)
 
-# Kernels
-sigma_smooth = 1.0
-smooth_kernel = gaussian_kernel(sigma_smooth)
 
-sigma_sharp = 1.0
-sharp_kernel = gaussian_derivative_kernel(sigma_sharp)
 
-# ----------------------------
-# Apply convolution to each channel
-# ----------------------------
-def process_channel(ch):
-    smoothed = cv2.filter2D(ch, -1, smooth_kernel)
-    sharpened = cv2.filter2D(ch, -1, sharp_kernel)
-    return smoothed, sharpened
+sigma = float(input("Enter sigma value: "))
+smooth_kernel = gaussian_kernel(sigma)
+sharp_kernel  = sharpening_kernel(sigma)
 
-H_smooth, H_sharp = process_channel(H)
-S_smooth, S_sharp = process_channel(S)
-V_smooth, V_sharp = process_channel(V)
 
-# Merge results into HSV images
+H_smooth = cv2.filter2D(H, -1, smooth_kernel)
+S_smooth = cv2.filter2D(S, -1, smooth_kernel)
+V_smooth = cv2.filter2D(V, -1, smooth_kernel)
+
 hsv_smooth = cv2.merge([H_smooth, S_smooth, V_smooth])
-hsv_sharp  = cv2.merge([H_sharp,  S_sharp,  V_sharp])
 
-# Convert back to BGR for visualization
-img_smooth_bgr = cv2.cvtColor(hsv_smooth, cv2.COLOR_HSV2BGR)
-img_sharp_bgr  = cv2.cvtColor(hsv_sharp,  cv2.COLOR_HSV2BGR)
 
-# ----------------------------
-# Show / Save results
-# ----------------------------
-cv2.imshow("Original (BGR)", img)
-cv2.imshow("Original HSV - H", H)
-cv2.imshow("Original HSV - S", S)
-cv2.imshow("Original HSV - V", V)
 
-cv2.imshow("H Smooth", H_smooth)
-cv2.imshow("H Sharp", H_sharp)
 
-cv2.imshow("S Smooth", S_smooth)
-cv2.imshow("S Sharp", S_sharp)
+H_sharp = cv2.filter2D(H, -1, sharp_kernel)
+S_sharp = cv2.filter2D(S, -1, sharp_kernel)
+V_sharp = cv2.filter2D(V, -1, sharp_kernel)
+hsv_sharp = cv2.merge([H_sharp, S_sharp, V_sharp])
 
-cv2.imshow("V Smooth", V_smooth)
-cv2.imshow("V Sharp", V_sharp)
 
-cv2.imshow("Final Smoothed (HSV->BGR)", img_smooth_bgr)
-cv2.imshow("Final Sharpened (HSV->BGR)", img_sharp_bgr)
 
-# Save all results
-cv2.imwrite("HSV_H.jpg", H)
-cv2.imwrite("HSV_S.jpg", S)
-cv2.imwrite("HSV_V.jpg", V)
+cv2.imshow("Original (BGR)", img); cv2.waitKey(0)
 
-cv2.imwrite("H_Smooth.jpg", H_smooth)
-cv2.imwrite("H_Sharp.jpg", H_sharp)
+cv2.imshow("Hue Channel", H); cv2.waitKey(0)
+cv2.imshow("Saturation Channel", S); cv2.waitKey(0)
+cv2.imshow("Value Channel", V); cv2.waitKey(0)
 
-cv2.imwrite("S_Smooth.jpg", S_smooth)
-cv2.imwrite("S_Sharp.jpg", S_sharp)
+cv2.imshow("Gausian Hue", H_smooth); cv2.waitKey(0)
+cv2.imshow("Gausian Saturation", S_smooth); cv2.waitKey(0)
+cv2.imshow("Gausian Value", V_smooth); cv2.waitKey(0)
+cv2.imshow("Gausian merged", hsv_smooth); cv2.waitKey(0)
 
-cv2.imwrite("V_Smooth.jpg", V_smooth)
-cv2.imwrite("V_Sharp.jpg", V_sharp)
+cv2.imshow("Sharpened Hue", H_sharp); cv2.waitKey(0)
+cv2.imshow("Sharpened Saturation", S_sharp); cv2.waitKey(0)
+cv2.imshow("Sharpened Value", V_sharp); cv2.waitKey(0)
+cv2.imshow("Sharpened merged", hsv_sharp); cv2.waitKey(0)
 
-cv2.imwrite("HSV_Smoothed_BGR.jpg", img_smooth_bgr)
-cv2.imwrite("HSV_Sharpened_BGR.jpg", img_sharp_bgr)
-
-cv2.waitKey(0)
 cv2.destroyAllWindows()
