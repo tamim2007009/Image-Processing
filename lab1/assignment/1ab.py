@@ -47,6 +47,9 @@ cv2.imshow("Original", img)
 cv2.waitKey(0)
 
 smooth_kernel = gaussian_kernel(sigma)
+
+print(smooth_kernel)
+
 img_smooth = cv2.filter2D(img, ddepth=cv2.CV_32F, kernel=smooth_kernel)
 smooth_norm = np.round(cv2.normalize(img_smooth, None, 0, 255, cv2.NORM_MINMAX)).astype(np.uint8)
 
