@@ -59,7 +59,7 @@ grad_mag = np.round(cv2.normalize(grad_mag, None, 0, 255, cv2.NORM_MINMAX)).asty
 cv2.imshow("gradient image", grad_mag)
 cv2.waitKey(0)
 
-th1, th2 = map(float, input("Enter two threshold values: ").split())
+th1, th2 = map(int, input("Enter two threshold values: ").split())
 th_img = threshold_image(grad_mag, th1, th2)
 
 cv2.imshow("After applying thresholding", th_img)
