@@ -27,13 +27,16 @@ def threshold_image(img, th1,th2):
                 final[i,j]=0
     return final
 
+def normalize_kernel(K):
+    K_norm = cv2.normalize(K, None, alpha=-25, beta=25, norm_type=cv2.NORM_MINMAX)
+    return np.round(K_norm).astype(int) 
+
 sigma = float(input("Enter the value of sigma: "))
 gx, gy = gaussian_derivative_kernels(sigma)
 
+print("x derivative kernel after normalization\n", normalize_kernel(gx))
+print("y derivative kernel after normalization\n", normalize_kernel(gy))
 
-print(gx)
-print("hellow ")
-print(gy)
 
 
 

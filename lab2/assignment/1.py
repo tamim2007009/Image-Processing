@@ -15,20 +15,24 @@ def gaussian_derivative_kernels(sigma):
     return Gx, Gy
 
 def hysteresis_thresholding(grad, low, high):
-    """Apply hysteresis thresholding to a gradient image."""
+   
     strong = 255
     weak = 128
     output = np.zeros_like(grad, dtype=np.uint8)
 
-    # Step 1: classify pixels as strong, weak, or zero
-    strong_pixels = grad >= high
-    weak_pixels = (grad >= low) & (grad < high)
-
-    output[strong_pixels] = strong
-    output[weak_pixels] = weak
+   
+    h, w = grad.shape
+    for i in range(h):
+        for j in range(w):
+            if grad[i, j] >= high:
+                output[i, j] = strong
+            elif grad[i, j] >= low:
+                output[i, j] = weak
+            else:
+                output[i, j] = 0
 
     # Step 2: Track edges by connecting weak pixels to strong ones
-    h, w = grad.shape
+  
     for i in range(1, h-1):
         for j in range(1, w-1):
             if output[i, j] == weak:
@@ -39,7 +43,7 @@ def hysteresis_thresholding(grad, low, high):
                     output[i, j] = 0
     return output
 
-# --- Main Script ---
+
 sigma = float(input("Enter the value of sigma: "))
 gx, gy = gaussian_derivative_kernels(sigma)
 
