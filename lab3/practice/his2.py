@@ -36,7 +36,7 @@ def equalize_hsv(image):
 
 
 # -------- Main Program --------
-image = cv2.imread(r"lena.jpg")
+image = cv2.imread(r"lena.jpg",1)
 
 # Method 1: RGB equalization
 rgb_eq = equalize_rgb(image)
