@@ -82,10 +82,10 @@ def Manual_equalizeHist(image):
         x+=out_pdf[i]
         out_cdf[i]=x
 
-    plt.figure()
-    plt.plot(out_cdf)
-    plt.title("output cdf")
-    plt.show()     
+    # plt.figure()
+    # plt.plot(out_cdf)
+    # plt.title("output cdf")
+    # plt.show()     
     
     
     
