@@ -71,15 +71,24 @@ def histogram_matching(image, erlang_hist):
 
     input_cdf = calc_cdf(image)
 
-  
     target_pdf = erlang_hist / np.sum(erlang_hist)
     target_cdf = np.cumsum(target_pdf)
 
     mapping = np.zeros(256, dtype=np.uint8)
     for i in range(256):
-        diff = np.abs(input_cdf[i] - target_cdf)
-        mapping[i] = np.argmin(diff)
-
+        
+        input_cdf_val = input_cdf[i]
+        
+        min_difference = float('inf')
+        best_match = 0
+        
+        for g_t in range(256):
+            difference = abs(input_cdf_val - target_cdf[g_t])
+            if difference < min_difference:
+                min_difference = difference
+                best_match = g_t
+                
+        mapping[i] = best_match
 
     h, w = image.shape
     matched = np.zeros_like(image, dtype=np.uint8)
