@@ -93,47 +93,89 @@ def Manual_equalizeHist(image):
 
 # -------- Main Program --------
 image = cv2.imread(r"histogram.jpg", cv2.IMREAD_GRAYSCALE)
+
+# First equalization
 he1, hist, out_hist, cdf, out_cdf = Manual_equalizeHist(image)
 
+# Second equalization on HE1
+he2, hist2, out_hist2, cdf2, out_cdf2 = Manual_equalizeHist(he1)
 
-he2 = cv2.equalizeHist(image)
-
-plt.figure(figsize=(10, 12))
+# -----------------------------
+# Visualization
+# -----------------------------
+plt.figure(figsize=(14, 12))
 
 # 1. Input Image
-plt.subplot(3, 2, 1)
+plt.subplot(3, 3, 1)
 plt.imshow(image, cmap='gray')
 plt.title("Input Image")
+plt.axis("off")
 
-
-# 2. Output Image (HE1 - Manual)
-plt.subplot(3, 2, 2)
+# 2. HE1 Image
+plt.subplot(3, 3, 2)
 plt.imshow(he1, cmap='gray')
-plt.title("Output Image (HE1 - Manual)")
+plt.title("HE1 Image")
+plt.axis("off")
 
+# 3. HE2 Image
+plt.subplot(3, 3, 3)
+plt.imshow(he2, cmap='gray')
+plt.title("HE2 Image")
+plt.axis("off")
 
-# 3. Input Histogram
-plt.subplot(3, 2, 3)
-plt.plot(hist)
+# 4. Input Histogram
+plt.subplot(3, 3, 4)
+plt.plot(hist, color='blue')
 plt.title("Input Histogram")
 
-
-# 4. Histogram of HE1
-plt.subplot(3, 2, 4)
-plt.plot(out_hist)
+# 5. Histogram of HE1
+plt.subplot(3, 3, 5)
+plt.plot(out_hist, color='green')
 plt.title("Histogram of HE1")
 
+# 6. Histogram of HE2
+plt.subplot(3, 3, 6)
+plt.plot(out_hist2, color='red')
+plt.title("Histogram of HE2")
 
-# 5. Input CDF
-plt.subplot(3, 2, 5)
-plt.plot(cdf)
+# 7. Input CDF
+plt.subplot(3, 3, 7)
+plt.plot(cdf, color='blue')
 plt.title("Input CDF")
 
-
-# 6. CDF of HE1
-plt.subplot(3, 2, 6)
-plt.plot(out_cdf)
+# 8. CDF of HE1
+plt.subplot(3, 3, 8)
+plt.plot(out_cdf, color='green')
 plt.title("CDF of HE1")
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# 9. CDF of HE2
+plt.subplot(3, 3, 9)
+plt.plot(out_cdf2, color='red')
+plt.title("CDF of HE2")
+
+plt.tight_layout()
+plt.show()
+
+
+# -----------------------------
+# Extra: Compare HE1 and HE2
+# -----------------------------
+diff = cv2.absdiff(he1, he2)
+mse = np.mean((he1.astype("float") - he2.astype("float")) ** 2)
+psnr = float("inf") if mse == 0 else 20 * np.log10(255.0 / np.sqrt(mse))
+
+print("MSE between HE1 and HE2:", mse)
+print("PSNR between HE1 and HE2:", psnr)
+
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.imshow(diff, cmap='gray')
+plt.title("Difference (HE1 - HE2)")
+plt.axis("off")
+
+plt.subplot(1, 2, 2)
+plt.plot(out_hist, label="HE1 Histogram", color="green")
+plt.plot(out_hist2, label="HE2 Histogram", color="red", linestyle="--")
+plt.legend()
+plt.title("Histogram Comparison: HE1 vs HE2")
+plt.show()

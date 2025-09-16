@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+   # -*- coding: utf-8 -*-
 """
 Created on Fri Sep 12 17:28:21 2025
 
@@ -21,7 +21,7 @@ def histogram(image):
     pdf = np.zeros(256, dtype=np.float32)
     for i in range(256):
         pdf[i] = hist[i] / float(total)
-
+ 
     cdf = np.zeros(256, dtype=np.float32)
     p = 0
     for i in range(256):
