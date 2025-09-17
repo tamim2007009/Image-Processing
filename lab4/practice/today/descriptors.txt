@@ -1,0 +1,51 @@
+Image Processing Lab 5 - Region Descriptors
+==================================================
+
+Image: train_rectangle
+Area: 2500
+Perimeter: 196
+Max Diameter: 50
+Form Factor: 0.817782
+Roundness: 1.273240
+Compactness: 15.366400
+------------------------------
+Image: train_circle
+Area: 1961
+Perimeter: 140
+Max Diameter: 51
+Form Factor: 1.257278
+Roundness: 0.959947
+Compactness: 9.994901
+------------------------------
+Image: train_triangle
+Area: 840
+Perimeter: 118
+Max Diameter: 41
+Form Factor: 0.758098
+Roundness: 0.636241
+Compactness: 16.576190
+------------------------------
+Image: test_rectangle
+Area: 2500
+Perimeter: 196
+Max Diameter: 50
+Form Factor: 0.817782
+Roundness: 1.273240
+Compactness: 15.366400
+------------------------------
+Image: test_circle
+Area: 1961
+Perimeter: 140
+Max Diameter: 51
+Form Factor: 1.257278
+Roundness: 0.959947
+Compactness: 9.994901
+------------------------------
+Image: test_triangle
+Area: 840
+Perimeter: 118
+Max Diameter: 41
+Form Factor: 0.758098
+Roundness: 0.636241
+Compactness: 16.576190
+------------------------------
