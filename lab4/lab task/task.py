@@ -3,10 +3,6 @@ import numpy as np
 from math import pi, sqrt
 from tabulate import tabulate
 
-# -------------------------------
-# Functions
-# -------------------------------
-
 def find_max_d(binary_image):
     min_x = min_y = 1e9
     max_x = max_y = 0
