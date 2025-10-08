@@ -16,13 +16,6 @@ def imageShow(image, title="Image", show_image=True):
         cv2.imshow(title, image)
         cv2.waitKey(0)
 
-def display_results_terminal(student_id, score, threshold=50.0):
-    """Display results in terminal with pass/fail based on threshold"""
-    status = "PASS" if score >= threshold else "FAIL"
-    print(f"Student ID: {student_id}")
-    print(f"Score: {score:.1f}%")
-    print(f"Status: {status} (Threshold: {threshold}%)")
-    print("-" * 40)
 
 id=[]
 res=[]
@@ -133,7 +126,7 @@ def processImages(filepath):
         for j in range(len(areas)):
             if (sorted_area[i] == areas[j]):
                 area_index.append(j)
-                break;
+                break
     # print(area_index)
     max_index = area_index[0]
     max_contour = img.copy()
@@ -175,126 +168,8 @@ def processImages(filepath):
     #     cv2.imshow("Test box", boxes[i])
     #     cv2.waitKey(0)
 
-    # GETTING NON ZERO PIXEL VALUES OF EACH BOX
-    myPixelVal = np.zeros((questions, choices))
-    countC = 0
-    countR = 0
-
-    for image in boxes:
-        totalPixels = helper.countNonZeroPixel(image)
-        # print("pixel count")
-        # print(totalPixels)
-        # cv2.imshow("Test box", image)
-        # cv2.waitKey(0)
-
-        myPixelVal[countR][countC] = totalPixels
-        countC += 1
-        if (countC == choices):
-            countR += 1
-            countC = 0
-    # print("Count pixel value")
-    # print(myPixelVal)
-
-    # FINDING INDEXES OF THE MARKINGS
-    myIndex = []
-    for x in range(0, questions):
-        arr = myPixelVal[x]
-        myIndexVal = np.where(arr == np.amax(arr))
-        # print(myIndexVal[0])
-        myIndex.append(myIndexVal[0][0])
-    # print(myIndex)
-
-    # GRADING
-    gradings = []
-    for x in range(0, questions):
-        if (ans[x] == myIndex[x]):
-            gradings.append(1)
-        else:
-            gradings.append(0)
-    score = (sum(gradings) / questions) * 100
-    res.append(score)
-    # print(score)
-
-    # DISPLAYING ANSWERS
-    imgResult = img_padded.copy()
-    imgResult = helper.showAnswers(imgResult, myIndex, questions, ans, choices, gradings)
-    imageShow(imgResult, "Answers", show_image=True)
-
-    # DISPLAY GRADING
-    grade_index = area_index[2]
-    grade_contour = img.copy()
-    # 0 -> ans, 2 -> grade, 4 -> name
-    # helper.manual_draw_contours(grade_contour, contours[grade_index], (0, 255, 0), 1)
-    # cv2.imshow("Grade contour",grade_contour)
-    # cv2.waitKey(0)
-
-    grade_corner_points = corner_points[grade_index]
-    # print("grade corner points")
-    # print(grade_corner_points)
-    grade_bl_x = grade_corner_points[2][0] - 50
-    grade_bl_y = grade_corner_points[2][1] - 100
-    grade_tr_x = grade_corner_points[1][0] + 20
-    grade_tr_y = grade_corner_points[1][1] + 20
-    # anss = np.ones((row_end-row_start+1,col_end-col_start+1))
-    grade_wd = grade_tr_x - grade_bl_x
-    grade_ht = grade_tr_y - grade_bl_y
-    x, y, w, h = grade_bl_x, grade_bl_y, grade_wd, grade_ht  # Example: x, y, width, height of the ROI
-    grade_roi = imgGray[y:y + h, x:x + w]
-    grade_new_image = np.zeros_like(grade_roi)  # Create a black image with the same size as roi
-    grade_new_image[:, :] = grade_roi
-    helper.manual_draw_contours(grade_contour, contours[grade_index], (0, 255, 0), 1)
-    imageShow(grade_contour, "Grading section", show_image=True)
-
-    imgGrading = grade_contour.copy()
-    cv2.putText(imgGrading, str(int(score)) + "%", (240, 390), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 3)
-    imageShow(imgGrading, "Grading", show_image=True)
-
-    # Display results in terminal with 50% threshold
-    display_results_terminal(filename_without_extension, score, threshold=50.0)
-
-
-
-    #
-    # imgBlank = np.zeros_like(img)
-    # imageArray = [[img,imgGray,imgBlur,imgCanny],
-    #               [drawCnt,max_contour,img_padded,imgThres],
-    #               [imgResult,grade_contour,imgGrading,imgBlank]]
-    # lables = [["Original","Gray","Blur","Canny"],
-    #           ["Contours","Ans section","Birds eye","Threshold"],
-    #           ["Result","Grade section","Grading","Blank"]]
-    #
-    # imgStacked = helper.stackImages(imageArray,0.5,lables)
-    # #
-    # # cv2.imshow("Final Result",imgFinal)
-    # cv2.imshow("Stacked Images",imgStacked)
-    # cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def save_to_excel(id_array, score_array):
-    """
-    Excel saving function - currently disabled
-    Uncomment the imports and code below if you want to enable Excel saving
-    """
-    # from openpyxl.workbook import Workbook
-    # wb = Workbook()
-    # ws = wb.active
-    # ws.title = "ID Scores"
-    # 
-    # # Write headers
-    # ws['A1'] = "ID"
-    # ws['B1'] = "Score"
-    # 
-    # # Write data
-    # for idx, (id_val, score_val) in enumerate(zip(id_array, score_array), start=2):
-    #     ws[f'A{idx}'] = id_val
-    #     ws[f'B{idx}'] = score_val
-    # 
-    # # Save the workbook
-    # excel_filename = "result.xlsx"
-    # wb.save(excel_filename)
-    # print(f"Excel file saved to: {excel_filename}")
-    
-    print("Excel saving is disabled. Results are displayed in terminal only.")
 
 def main():
     global id, res
@@ -326,25 +201,6 @@ def main():
             print("✓ Processing completed")
         except Exception as e:
             print(f"✗ Error processing {file_path}: {str(e)}")
-    
-    # Save results to Excel
-    if id and res:
-        # save_to_excel(id, res)  # Removed Excel saving
-        print(f"\n{'='*50}")
-        print("FINAL SUMMARY")
-        print(f"{'='*50}")
-        pass_count = sum(1 for score in res if score >= 50.0)
-        fail_count = len(res) - pass_count
-        print(f"Total Students: {len(res)}")
-        print(f"Passed (≥50%): {pass_count}")
-        print(f"Failed (<50%): {fail_count}")
-        print(f"Pass Rate: {(pass_count/len(res)*100):.1f}%")
-        print(f"{'='*50}")
-        for i, (student_id, score) in enumerate(zip(id, res)):
-            status = "PASS" if score >= 50.0 else "FAIL"
-            print(f"{student_id}: {score:.1f}% - {status}")
-    else:
-        print("No results to display.")
 
 if __name__ == "__main__":
     main()
