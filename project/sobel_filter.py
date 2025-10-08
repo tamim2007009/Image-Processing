@@ -1,6 +1,5 @@
 import numpy as np
-
-
+"""
 def sobel():
     horizontal_filter = np.array(
         [
@@ -22,3 +21,7 @@ def sobel():
     return (horizontal_filter,vertical_filter)
 
 # sobel()
+
+
+"""
+
