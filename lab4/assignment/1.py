@@ -115,7 +115,9 @@ def process_image(img):
 img1 = cv2.imread("Picture1.jpg", cv2.IMREAD_GRAYSCALE)    
 img2 = cv2.imread("Picture2.jpg", cv2.IMREAD_GRAYSCALE)   
 img3 = cv2.imread("Picture3.jpg", cv2.IMREAD_GRAYSCALE)
-
+img4=cv2.imread("1.jpg",cv2.IMREAD_GRAYSCALE)
+img5=cv2.imread("2.jpg",cv2.IMREAD_GRAYSCALE)
 process_image(img1)
 process_image(img2)
 process_image(img3)
+process_image(img4)
