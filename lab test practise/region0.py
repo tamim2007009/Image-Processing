@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Oct 25 23:45:21 2025
+
+@author: USER
+"""
+
 import cv2
 import numpy as np
 from math import pi, sqrt
@@ -13,7 +20,7 @@ def find_max_d(binary_image):
                 min_x = min(min_x, x)
                 min_y = min(min_y, y)
                 max_x = max(max_x, x)
-                max_y = max(max_y, y)   
+                max_y = max(max_y, y)
     return max(max_x - min_x, max_y - min_y)
 
 def calculate_descriptors(binary_image):
